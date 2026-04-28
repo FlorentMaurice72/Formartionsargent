@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs'
 import { redirect } from 'next/navigation'
+import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
 import { Crown, Mail, Calendar, BookOpen } from 'lucide-react'
 import Link from 'next/link'
@@ -28,7 +29,7 @@ export default async function ProfilePage() {
       {/* Profile card */}
       <div className="p-6 rounded-2xl border border-white/10 bg-white/3 flex items-center gap-5">
         {clerkUser?.imageUrl ? (
-          <img src={clerkUser.imageUrl} alt="Avatar" className="w-16 h-16 rounded-full object-cover" />
+          <Image src={clerkUser.imageUrl} alt="Avatar" width={64} height={64} className="rounded-full object-cover" />
         ) : (
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-black font-black text-2xl">
             {clerkUser?.firstName?.[0] ?? '?'}

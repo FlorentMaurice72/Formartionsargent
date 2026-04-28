@@ -1,15 +1,15 @@
 'use client'
 
-import { useUser } from '@clerk/nextjs'
 import { Bell, Search } from 'lucide-react'
 import Link from 'next/link'
+import { MobileNav } from './MobileNav'
 
 export function DashboardTopbar() {
-  const { user } = useUser()
-
   return (
-    <header className="sticky top-0 z-30 h-16 border-b border-white/10 bg-black/60 backdrop-blur-xl flex items-center justify-between px-6 gap-4">
+    <header className="sticky top-0 z-30 h-16 border-b border-white/10 bg-black/60 backdrop-blur-xl flex items-center justify-between px-4 sm:px-6 gap-3">
+      {/* Left: hamburger (mobile) + search */}
       <div className="flex items-center gap-3 flex-1 max-w-md">
+        <MobileNav />
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
           <input
@@ -20,11 +20,11 @@ export function DashboardTopbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <button className="relative p-2 rounded-lg hover:bg-white/5 transition-colors">
+      {/* Right */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <button className="p-2 rounded-lg hover:bg-white/5 transition-colors">
           <Bell className="w-4 h-4 text-zinc-400" />
         </button>
-
         <Link
           href="/checkout?plan=premium"
           className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-500 text-black text-xs font-bold hover:opacity-90 transition-opacity"

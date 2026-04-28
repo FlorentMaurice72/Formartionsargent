@@ -6,6 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://formartionsargent.vercel.app'),
   title: {
     default: 'FormationsArgent — Liberté Financière en 6 Piliers',
     template: '%s | FormationsArgent',

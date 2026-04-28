@@ -11,6 +11,7 @@ export default authMiddleware({
     '/sign-up(.*)',
     '/checkout',
     '/api/webhooks/stripe',
+    '/api/webhooks/clerk',
     '/mentions-legales',
     '/cgu',
     '/politique-confidentialite',
