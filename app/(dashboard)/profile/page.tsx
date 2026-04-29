@@ -1,4 +1,4 @@
-import { auth, currentUser } from '@clerk/nextjs'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Image from 'next/image'
 import { prisma } from '@/lib/prisma'
