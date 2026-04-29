@@ -6,11 +6,17 @@ const isProtectedRoute = createRouteMatcher([
   '/profile(.*)',
 ])
 
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    await auth.protect()
-  }
-})
+export default clerkMiddleware(
+  async (auth, req) => {
+    if (isProtectedRoute(req)) {
+      await auth.protect()
+    }
+  },
+  async () => ({
+    publishableKey: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    secretKey: process.env.CLERK_SECRET_KEY,
+  }),
+)
 
 export const config = {
   matcher: [
