@@ -8,9 +8,7 @@ const nextConfig = {
       'i.vimeocdn.com',
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client'],
-  },
+  serverExternalPackages: ['@prisma/client'],
 }
 
 module.exports = nextConfig
