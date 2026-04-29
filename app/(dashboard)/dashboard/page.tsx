@@ -40,7 +40,7 @@ async function getDashboardData(clerkId: string) {
 }
 
 export default async function DashboardPage() {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
   const { user, modules, completedIds, totalVideos, completedTotal, isPremium } =

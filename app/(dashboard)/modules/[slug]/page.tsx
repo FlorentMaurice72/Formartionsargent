@@ -23,7 +23,7 @@ async function getModuleData(slug: string, clerkId: string) {
 }
 
 export default async function ModulePage({ params }: { params: { slug: string } }) {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
   const { user, module } = await getModuleData(params.slug, userId)
