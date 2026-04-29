@@ -1,27 +1,25 @@
-import { authMiddleware } from '@clerk/nextjs'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-export default authMiddleware({
-  // Routes accessibles sans connexion
-  publicRoutes: [
-    '/',
-    '/ebook',
-    '/blog',
-    '/blog/(.*)',
-    '/sign-in(.*)',
-    '/sign-up(.*)',
-    '/checkout',
-    '/api/webhooks/stripe',
-    '/api/webhooks/clerk',
-    '/mentions-legales',
-    '/cgu',
-    '/politique-confidentialite',
-  ],
-  // Routes ignorées par le middleware (assets, etc.)
-  ignoredRoutes: [
-    '/_next/(.*)',
-    '/favicon.ico',
-    '/api/modules',
-  ],
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/ebook',
+  '/blog',
+  '/blog/(.*)',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/checkout',
+  '/api/webhooks/stripe',
+  '/api/webhooks/clerk',
+  '/mentions-legales',
+  '/cgu',
+  '/politique-confidentialite',
+  '/api/modules',
+])
+
+export default clerkMiddleware((auth, request) => {
+  if (!isPublicRoute(request)) {
+    auth.protect()
+  }
 })
 
 export const config = {
