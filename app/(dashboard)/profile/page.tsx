@@ -6,7 +6,7 @@ import { Crown, Mail, Calendar, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ProfilePage() {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
   const [clerkUser, dbUser] = await Promise.all([

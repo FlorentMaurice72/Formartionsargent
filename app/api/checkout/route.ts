@@ -1,10 +1,14 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { stripe } from '@/lib/stripe'
+import { getStripe, isStripeConfigured } from '@/lib/stripe'
 
 export async function POST(req: NextRequest) {
-  const { userId } = auth()
+  if (!isStripeConfigured()) {
+    return NextResponse.json({ error: "Paiement non disponible pour l'instant" }, { status: 503 })
+  }
+
+  const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { plan, billing } = await req.json()
@@ -12,6 +16,7 @@ export async function POST(req: NextRequest) {
   const user = await prisma.user.findUnique({ where: { clerkId: userId } })
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
+  const stripe = getStripe()
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!
 
   if (plan === 'premium') {

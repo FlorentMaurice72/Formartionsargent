@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import Stripe from 'stripe'
-import { stripe } from '@/lib/stripe'
+import { getStripe, isStripeConfigured } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 
 export async function POST(req: NextRequest) {
+  if (!isStripeConfigured() || !process.env.STRIPE_WEBHOOK_SECRET) {
+    return NextResponse.json({ error: 'Stripe not configured' }, { status: 503 })
+  }
+
   const body = await req.text()
   const signature = headers().get('stripe-signature')!
 
   let event: Stripe.Event
   try {
-    event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
+    event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
   } catch {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
@@ -44,11 +48,10 @@ export async function POST(req: NextRequest) {
     }
 
     case 'customer.subscription.deleted': {
-      // Revoke premium on subscription cancellation
       const subscription = event.data.object as Stripe.Subscription
       const customerId = subscription.customer as string
 
-      const sessions = await stripe.checkout.sessions.list({ customer: customerId, limit: 1 })
+      const sessions = await getStripe().checkout.sessions.list({ customer: customerId, limit: 1 })
       const userId = sessions.data[0]?.metadata?.userId
       if (userId) {
         await prisma.user.update({
@@ -60,7 +63,6 @@ export async function POST(req: NextRequest) {
     }
 
     case 'invoice.payment_failed': {
-      // Optionally notify user or revoke access after grace period
       break
     }
   }

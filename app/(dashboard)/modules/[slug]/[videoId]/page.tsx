@@ -29,7 +29,7 @@ export default async function VideoPage({
 }: {
   params: { slug: string; videoId: string }
 }) {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) redirect('/sign-in')
 
   const { user, video } = await getVideoData(params.videoId, userId)

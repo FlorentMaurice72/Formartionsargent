@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 // Called after Clerk sign-up to create the user in DB
 export async function POST() {
-  const { userId } = auth()
+  const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const clerkUser = await currentUser()
