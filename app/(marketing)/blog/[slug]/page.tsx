@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ChevronLeft, Clock, Calendar } from 'lucide-react'
+import { ChevronLeft, Clock, Calendar, ArrowRight } from 'lucide-react'
 import { Navbar } from '@/components/shared/Navbar'
 import { Footer } from '@/components/shared/Footer'
 import { getArticleBySlug, ARTICLES, CATEGORY_COLORS } from '@/lib/blog-data'
@@ -35,6 +35,9 @@ export default function ArticlePage({ params }: Props) {
   if (!article) notFound()
 
   const categoryColor = CATEGORY_COLORS[article.category] ?? 'bg-zinc-500/20 text-zinc-400'
+  const related = ARTICLES.filter(
+    (a) => a.category === article.category && a.slug !== article.slug
+  ).slice(0, 3)
 
   // Convert markdown-like content to paragraphs for display
   const sections = article.content
@@ -159,6 +162,38 @@ export default function ArticlePage({ params }: Props) {
             Voir les formations →
           </Link>
         </div>
+
+        {/* Articles liés */}
+        {related.length > 0 && (
+          <div className="mt-16">
+            <h3 className="font-bold text-lg mb-5">
+              Dans la même catégorie —{' '}
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${categoryColor}`}>
+                {article.category}
+              </span>
+            </h3>
+            <div className="space-y-3">
+              {related.map((rel) => (
+                <Link
+                  key={rel.slug}
+                  href={`/blog/${rel.slug}`}
+                  className="flex items-center justify-between gap-4 p-4 rounded-xl border border-white/10 bg-white/3 hover:bg-white/6 hover:border-white/20 transition-all group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm group-hover:text-yellow-400 transition-colors truncate">
+                      {rel.title}
+                    </p>
+                    <span className="flex items-center gap-1 text-xs text-zinc-600 mt-1">
+                      <Clock className="w-3 h-3" />
+                      {rel.readTime}
+                    </span>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-zinc-600 group-hover:text-yellow-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Back bottom */}
         <div className="mt-10">
