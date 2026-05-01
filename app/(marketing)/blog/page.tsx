@@ -10,12 +10,20 @@ export const metadata = {
     'Stratégies, analyses et conseils pour construire ta liberté financière : bourse, immobilier, crypto, business.',
 }
 
-export default function BlogPage() {
+interface Props {
+  searchParams: { category?: string }
+}
+
+export default function BlogPage({ searchParams }: Props) {
+  const active = searchParams.category ?? null
+  const categories = Array.from(new Set(ARTICLES.map((a) => a.category)))
+  const filtered = active ? ARTICLES.filter((a) => a.category === active) : ARTICLES
+
   return (
     <>
       <Navbar />
       <main className="min-h-screen pt-24 pb-16 max-w-4xl mx-auto px-4">
-        <div className="mb-12">
+        <div className="mb-10">
           <h1 className="text-4xl font-black mb-3">
             Blog — <span className="text-gradient">Éducation Financière</span>
           </h1>
@@ -24,8 +32,42 @@ export default function BlogPage() {
           </p>
         </div>
 
+        {/* Filtres */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          <Link
+            href="/blog"
+            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+              !active
+                ? 'bg-white text-black'
+                : 'bg-white/10 text-zinc-400 hover:bg-white/15 hover:text-white'
+            }`}
+          >
+            Tous ({ARTICLES.length})
+          </Link>
+          {categories.map((cat) => {
+            const count = ARTICLES.filter((a) => a.category === cat).length
+            const isActive = active === cat
+            return (
+              <Link
+                key={cat}
+                href={`/blog?category=${encodeURIComponent(cat)}`}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  CATEGORY_COLORS[cat] ?? 'bg-white/10 text-zinc-400'
+                } ${
+                  isActive
+                    ? 'ring-2 ring-white/40 ring-offset-1 ring-offset-black'
+                    : 'opacity-70 hover:opacity-100'
+                }`}
+              >
+                {cat} ({count})
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Liste articles */}
         <div className="space-y-5">
-          {ARTICLES.map((article) => (
+          {filtered.map((article) => (
             <Link
               key={article.slug}
               href={`/blog/${article.slug}`}
@@ -56,6 +98,12 @@ export default function BlogPage() {
             </Link>
           ))}
         </div>
+
+        {filtered.length === 0 && (
+          <p className="text-zinc-500 text-sm text-center py-12">
+            Aucun article dans cette catégorie.
+          </p>
+        )}
       </main>
       <Footer />
     </>
