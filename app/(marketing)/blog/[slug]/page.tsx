@@ -30,6 +30,51 @@ export function generateMetadata({ params }: Props): Metadata {
   }
 }
 
+const CTAS: Record<string, { title: string; description: string; label: string; href: string; secondary?: { label: string; href: string } }> = {
+  Bourse: {
+    title: 'Prêt à investir en bourse ?',
+    description: 'Accède aux formations vidéo sur les ETF, le PEA, la stratégie DCA et la construction d\'un portefeuille solide.',
+    label: 'Voir la formation Bourse →',
+    href: '/checkout?plan=premium',
+    secondary: { label: 'Télécharger l\'ebook gratuit', href: '/checkout?plan=ebook' },
+  },
+  Immobilier: {
+    title: 'Lance ton premier investissement locatif',
+    description: 'Nos formations t\'accompagnent de la recherche du bien jusqu\'à la gestion du locataire, étape par étape.',
+    label: 'Voir la formation Immobilier →',
+    href: '/checkout?plan=premium',
+    secondary: { label: 'Télécharger l\'ebook gratuit', href: '/checkout?plan=ebook' },
+  },
+  Crypto: {
+    title: 'Maîtrise Bitcoin et les cryptomonnaies',
+    description: 'Formations vidéo sur Bitcoin, la stratégie DCA, la sécurisation de tes actifs et la gestion du risque.',
+    label: 'Voir la formation Crypto →',
+    href: '/checkout?plan=premium',
+    secondary: { label: 'Télécharger l\'ebook gratuit', href: '/checkout?plan=ebook' },
+  },
+  Business: {
+    title: 'Crée ton premier revenu en ligne',
+    description: 'De l\'idée au premier euro : freelance, affiliation, produit digital. Nos formations couvrent chaque modèle en détail.',
+    label: 'Voir la formation Business →',
+    href: '/checkout?plan=premium',
+    secondary: { label: 'Télécharger l\'ebook gratuit', href: '/checkout?plan=ebook' },
+  },
+  Liberté: {
+    title: 'Construis ton plan vers la liberté financière',
+    description: 'L\'ebook Les 6 Piliers + toutes les formations vidéo : un plan complet et actionnable pour reprendre le contrôle de tes finances.',
+    label: 'Télécharger l\'ebook — 19 € →',
+    href: '/checkout?plan=ebook',
+    secondary: { label: 'Voir toutes les formations', href: '/checkout?plan=premium' },
+  },
+}
+
+const DEFAULT_CTA = {
+  title: 'Passe à l\'action',
+  description: 'Rejoins la plateforme et accède aux formations vidéo sur ce sujet et bien plus.',
+  label: 'Voir les formations →',
+  href: '/checkout?plan=premium',
+}
+
 export default function ArticlePage({ params }: Props) {
   const article = getArticleBySlug(params.slug)
   if (!article) notFound()
@@ -38,6 +83,7 @@ export default function ArticlePage({ params }: Props) {
   const related = ARTICLES.filter(
     (a) => a.category === article.category && a.slug !== article.slug
   ).slice(0, 3)
+  const cta = CTAS[article.category] ?? DEFAULT_CTA
 
   // Convert markdown-like content to paragraphs for display
   const sections = article.content
@@ -151,16 +197,24 @@ export default function ArticlePage({ params }: Props) {
 
         {/* CTA */}
         <div className="mt-16 p-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/10 text-center">
-          <h3 className="font-black text-lg mb-2">Passe à l'action</h3>
-          <p className="text-zinc-400 text-sm mb-5">
-            Rejoins la plateforme et accède aux formations vidéo sur ce sujet et bien plus.
-          </p>
-          <Link
-            href="/#pricing"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold text-sm hover:opacity-90 transition-opacity"
-          >
-            Voir les formations →
-          </Link>
+          <h3 className="font-black text-lg mb-2">{cta.title}</h3>
+          <p className="text-zinc-400 text-sm mb-5">{cta.description}</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href={cta.href}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold text-sm hover:opacity-90 transition-opacity"
+            >
+              {cta.label}
+            </Link>
+            {cta.secondary && (
+              <Link
+                href={cta.secondary.href}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-white/20 text-zinc-300 text-sm hover:bg-white/5 transition-colors"
+              >
+                {cta.secondary.label}
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Articles liés */}
